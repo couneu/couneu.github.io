@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>cour</title>
+  <title>couneu_blog</title>
   
   <subtitle>blog</subtitle>
   <link href="http://ruanrong.run/atom.xml" rel="self"/>
@@ -10,7 +10,7 @@
   <id>http://ruanrong.run/</id>
   
   <author>
-    <name>cour</name>
+    <name>couneu</name>
     
   </author>
   
