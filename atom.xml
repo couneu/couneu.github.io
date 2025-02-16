@@ -17,35 +17,6 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>JavaScript 预编译</title>
-    <link href="https://couneu.github.io/web/JavaScript/21_precompile/"/>
-    <id>https://couneu.github.io/web/JavaScript/21_precompile/</id>
-    <published>2024-12-31T16:00:00.000Z</published>
-    <updated>2024-12-31T16:00:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p>速记：变量声明提升，函数整体提升</p></blockquote><h2 id="全局预编译（GO-生成）"><a href="#全局预编译（GO-生成）" class="headerlink" title="全局预编译（GO 生成）"></a>全局预编译（GO 生成）</h2><ol><li>创建全局对象(GO): 浏览器环境中，GO 即 <code>window</code> 对象，所有全局变量和函数最终挂载到 GO 上。</li><li>变量声明提升: 将 <code>var</code> 声明的变量提升至作用域顶部，初始值为 <code>undefined</code>。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// undefined</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">var</span> a = <span class="number">20</span>; <span class="comment">// 合并声明，覆盖初始值</span></span><br></pre></td></tr></table></figure></li><li>函数声明提升: 将函数声明（非表达式）提升至作用域顶部，函数名若与变量名冲突，<strong>函数优先覆盖变量</strong>。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(foo); <span class="comment">// ƒ foo() &#123;&#125;</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> foo = <span class="number">10</span>;</span><br></pre></td></tr></table></figure></li><li>执行代码: 预编译结束开始执行代码， 变量赋值、函数表达式等操作在此阶段进行。</li></ol><h2 id="函数预编译（AO-生成）"><a href="#函数预编译（AO-生成）" class="headerlink" title="函数预编译（AO 生成）"></a>函数预编译（AO 生成）</h2><ol><li><p>创建 AO 对象： AO 用于存储函数内部的变量、参数和函数声明。</p></li><li><p>处理形参和变量声明： 将形参与 <code>var</code> 声明的变量加入 AO，值为 <code>undefined</code>（形参与变量名冲突时，<strong>形参保留初始值</strong>）</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params">a</span>) &#123;</span><br><span class="line"><span class="keyword">var</span> a; <span class="comment">// 形参已存在，声明被忽略</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// 1（由实参赋值）</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">test</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure></li><li><p>实参赋值给形参： 将实参与形参一一绑定，未传递的实参保持 <code>undefined</code></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params">a, b</span>) &#123;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a, b); <span class="comment">// 1, undefined</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">test</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure></li><li><p>处理函数声明： 函数声明提升至 AO 顶部，若与变量或形参同名，<strong>函数声明覆盖前者</strong>。</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params">a</span>) &#123;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// ƒ a() &#123;&#125;</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">test</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure></li><li><p>执行函数体： 预编译完成后，按代码顺序执行，变量赋值、表达式求值在此阶段完成。</p></li></ol><hr><h2 id="作用域链与生命周期"><a href="#作用域链与生命周期" class="headerlink" title="作用域链与生命周期"></a>作用域链与生命周期</h2><ul><li>GO 始终在作用域链末端，函数执行时 AO 位于前端，形成链式查找。</li><li>AO 随函数调用创建、执行完毕销毁，每次调用产生独立 AO，闭包会延长变量生命周期。</li><li>未声明直接赋值的变量（非严格模式）自动成为全局变量，挂载到 GO。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">accidentalGlobal = <span class="number">10</span>; <span class="comment">// 等价于 window.accidentalGlobal = 10</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">test</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(accidentalGlobal); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure></li></ul><hr><h2 id="示例分析"><a href="#示例分析" class="headerlink" title="示例分析"></a>示例分析</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params">y</span>) &#123;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(z); <span class="comment">// undefined（变量提升）</span></span><br><span class="line"><span class="keyword">var</span> z = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">y</span>(<span class="params"></span>) &#123;&#125; <span class="comment">// 覆盖形参 y</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(y, z); <span class="comment">// ƒ y() &#123;&#125;, 2</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">foo</span>(<span class="number">3</span>);</span><br></pre></td></tr></table></figure><ol><li><p>全局预编译</p><ul><li>变量 <code>x</code> 提升，值为 <code>undefined</code>。</li><li>函数 <code>foo</code> 提升，覆盖同名变量（如有）。</li><li>执行代码，<code>x</code> 赋值为 1。</li></ul></li><li><p>调用 <code>foo(3)</code> 时的 AO</p><ul><li>形参 <code>y</code> 初始化为 3，后因函数声明 <code>function y() &#123;&#125;</code> 被覆盖为函数体。</li><li>变量 <code>z</code> 提升，值为 <code>undefined</code>，执行到赋值语句后变为 2。</li></ul></li></ol><hr><h3 id="关键区别总结"><a href="#关键区别总结" class="headerlink" title="关键区别总结"></a>关键区别总结</h3><table><thead><tr><th>特征</th><th>全局预编译（GO）</th><th>函数预编译（AO）</th></tr></thead><tbody><tr><td>触发时机</td><td>脚本加载时</td><td>函数调用时</td></tr><tr><td>作用域链位置</td><td>最外层（始终存在）</td><td>函数执行时前端（临时）</td></tr><tr><td>变量处理顺序</td><td>变量 → 函数声明</td><td>形参&#x2F;变量 → 函数声明</td></tr><tr><td>同名覆盖逻辑</td><td>函数声明覆盖变量</td><td>函数声明覆盖形参&#x2F;变量</td></tr><tr><td>生命周期</td><td>持久（除非页面关闭）</td><td>临时（函数执行完毕销毁）</td></tr></tbody></table>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;blockquote&gt;
-&lt;p&gt;速记：变量声明提升，函数整体提升&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&quot;全局预编译（GO-生成）&quot;&gt;&lt;a href=&quot;#全局预编译（GO-生成）&quot; class=&quot;headerlink&quot; title=&quot;全局预编译（GO 生成）&quot;&gt;&lt;/a</summary>
-      
-    
-    
-    
-    <category term="前端" scheme="https://couneu.github.io/categories/%E5%89%8D%E7%AB%AF/"/>
-    
-    
-    <category term="前端" scheme="https://couneu.github.io/tags/%E5%89%8D%E7%AB%AF/"/>
-    
-    <category term="Javascript" scheme="https://couneu.github.io/tags/Javascript/"/>
-    
-  </entry>
-  
-  <entry>
     <title>CSS 方法</title>
     <link href="https://couneu.github.io/web/css/02_css_function/"/>
     <id>https://couneu.github.io/web/css/02_css_function/</id>
@@ -72,6 +43,35 @@
     <category term="前端" scheme="https://couneu.github.io/tags/%E5%89%8D%E7%AB%AF/"/>
     
     <category term="CSS" scheme="https://couneu.github.io/tags/CSS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CSS 变量</title>
+    <link href="https://couneu.github.io/web/css/01_css_variable/"/>
+    <id>https://couneu.github.io/web/css/01_css_variable/</id>
+    <published>2024-12-31T16:00:00.000Z</published>
+    <updated>2024-12-31T16:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><blockquote><p>CSS 变量定义名称必须要使用 <code>--</code> 作为开头，区分大小写通常使用短横线进行分割单词</p></blockquote><h2 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h2><blockquote><p>全局变量可以在整个文档中进行访问&#x2F;使用，而局部变量只能在声明它的选择器内部使用。</p></blockquote><p>－ 局部作用域： 默认书写在选择器下的变量具有局部的作用域－ 全局作用域： 书写在 <code>:root</code> 选择器下的变量具有全局作用域</p><blockquote><p><code>:root</code> 会匹配文档的根元素</p></blockquote><h2 id="变量定义"><a href="#变量定义" class="headerlink" title="变量定义"></a>变量定义</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">var</span>(name, value)</span><br></pre></td></tr></table></figure><p><strong>描述：</strong> － <code>name</code>： 必需，变量名称－ <code>value</code>： 可选，当前变量的默认值（当找不到变量时默认使用）</p><h2 id="JS-修改变量"><a href="#JS-修改变量" class="headerlink" title="JS 修改变量"></a>JS 修改变量</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取根元素</span></span><br><span class="line"><span class="keyword">var</span> r = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;:root&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建获取变量值的函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">myFunction_get</span>(<span class="params"></span>) &#123;</span><br><span class="line"><span class="comment">// Get the styles (properties and values) for the root</span></span><br><span class="line"><span class="keyword">var</span> rs = <span class="title function_">getComputedStyle</span>(r);</span><br><span class="line"><span class="comment">// Alert the value of the --blue variable</span></span><br><span class="line"><span class="title function_">alert</span>(<span class="string">&#x27;The value of --blue is: &#x27;</span> + rs.<span class="title function_">getPropertyValue</span>(<span class="string">&#x27;--blue&#x27;</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建设置变量值的函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">myFunction_set</span>(<span class="params"></span>) &#123;</span><br><span class="line"><span class="comment">// Set the value of variable --blue to another value (in this case &quot;lightblue&quot;)</span></span><br><span class="line">r.<span class="property">style</span>.<span class="title function_">setProperty</span>(<span class="string">&#x27;--blue&#x27;</span>, <span class="string">&#x27;lightblue&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介绍&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;CSS 变量定义名称必须要使用 &lt;code&gt;--&lt;/code&gt; 作为开头，区分大小写通常使用短横线进行分割单词&lt;/</summary>
+      
+    
+    
+    
+    <category term="前端" scheme="https://couneu.github.io/categories/%E5%89%8D%E7%AB%AF/"/>
+    
+    
+    <category term="前端" scheme="https://couneu.github.io/tags/%E5%89%8D%E7%AB%AF/"/>
+    
+    <category term="CSS" scheme="https://couneu.github.io/tags/CSS/"/>
+    
+    <category term="variable" scheme="https://couneu.github.io/tags/variable/"/>
     
   </entry>
   
@@ -108,19 +108,21 @@
   </entry>
   
   <entry>
-    <title>CSS 变量</title>
-    <link href="https://couneu.github.io/web/css/01_css_variable/"/>
-    <id>https://couneu.github.io/web/css/01_css_variable/</id>
+    <title>JavaScript 预编译</title>
+    <link href="https://couneu.github.io/web/JavaScript/21_precompile/"/>
+    <id>https://couneu.github.io/web/JavaScript/21_precompile/</id>
     <published>2024-12-31T16:00:00.000Z</published>
     <updated>2024-12-31T16:00:00.000Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><blockquote><p>CSS 变量定义名称必须要使用 <code>--</code> 作为开头，区分大小写通常使用短横线进行分割单词</p></blockquote><h2 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h2><blockquote><p>全局变量可以在整个文档中进行访问&#x2F;使用，而局部变量只能在声明它的选择器内部使用。</p></blockquote><p>－ 局部作用域： 默认书写在选择器下的变量具有局部的作用域－ 全局作用域： 书写在 <code>:root</code> 选择器下的变量具有全局作用域</p><blockquote><p><code>:root</code> 会匹配文档的根元素</p></blockquote><h2 id="变量定义"><a href="#变量定义" class="headerlink" title="变量定义"></a>变量定义</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">var</span>(name, value)</span><br></pre></td></tr></table></figure><p><strong>描述：</strong> － <code>name</code>： 必需，变量名称－ <code>value</code>： 可选，当前变量的默认值（当找不到变量时默认使用）</p><h2 id="JS-修改变量"><a href="#JS-修改变量" class="headerlink" title="JS 修改变量"></a>JS 修改变量</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取根元素</span></span><br><span class="line"><span class="keyword">var</span> r = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;:root&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建获取变量值的函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">myFunction_get</span>(<span class="params"></span>) &#123;</span><br><span class="line"><span class="comment">// Get the styles (properties and values) for the root</span></span><br><span class="line"><span class="keyword">var</span> rs = <span class="title function_">getComputedStyle</span>(r);</span><br><span class="line"><span class="comment">// Alert the value of the --blue variable</span></span><br><span class="line"><span class="title function_">alert</span>(<span class="string">&#x27;The value of --blue is: &#x27;</span> + rs.<span class="title function_">getPropertyValue</span>(<span class="string">&#x27;--blue&#x27;</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建设置变量值的函数</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">myFunction_set</span>(<span class="params"></span>) &#123;</span><br><span class="line"><span class="comment">// Set the value of variable --blue to another value (in this case &quot;lightblue&quot;)</span></span><br><span class="line">r.<span class="property">style</span>.<span class="title function_">setProperty</span>(<span class="string">&#x27;--blue&#x27;</span>, <span class="string">&#x27;lightblue&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<blockquote><p>速记：变量声明提升，函数整体提升</p></blockquote><h2 id="全局预编译（GO-生成）"><a href="#全局预编译（GO-生成）" class="headerlink" title="全局预编译（GO 生成）"></a>全局预编译（GO 生成）</h2><ol><li>创建全局对象(GO): 浏览器环境中，GO 即 <code>window</code> 对象，所有全局变量和函数最终挂载到 GO 上。</li><li>变量声明提升: 将 <code>var</code> 声明的变量提升至作用域顶部，初始值为 <code>undefined</code>。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// undefined</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">var</span> a = <span class="number">20</span>; <span class="comment">// 合并声明，覆盖初始值</span></span><br></pre></td></tr></table></figure></li><li>函数声明提升: 将函数声明（非表达式）提升至作用域顶部，函数名若与变量名冲突，<strong>函数优先覆盖变量</strong>。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(foo); <span class="comment">// ƒ foo() &#123;&#125;</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line"><span class="keyword">var</span> foo = <span class="number">10</span>;</span><br></pre></td></tr></table></figure></li><li>执行代码: 预编译结束开始执行代码， 变量赋值、函数表达式等操作在此阶段进行。</li></ol><h2 id="函数预编译（AO-生成）"><a href="#函数预编译（AO-生成）" class="headerlink" title="函数预编译（AO 生成）"></a>函数预编译（AO 生成）</h2><ol><li><p>创建 AO 对象： AO 用于存储函数内部的变量、参数和函数声明。</p></li><li><p>处理形参和变量声明： 将形参与 <code>var</code> 声明的变量加入 AO，值为 <code>undefined</code>（形参与变量名冲突时，<strong>形参保留初始值</strong>）</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params">a</span>) &#123;</span><br><span class="line"><span class="keyword">var</span> a; <span class="comment">// 形参已存在，声明被忽略</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// 1（由实参赋值）</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">test</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure></li><li><p>实参赋值给形参： 将实参与形参一一绑定，未传递的实参保持 <code>undefined</code></p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params">a, b</span>) &#123;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a, b); <span class="comment">// 1, undefined</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">test</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure></li><li><p>处理函数声明： 函数声明提升至 AO 顶部，若与变量或形参同名，<strong>函数声明覆盖前者</strong>。</p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params">a</span>) &#123;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a); <span class="comment">// ƒ a() &#123;&#125;</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">test</span>(<span class="number">1</span>);</span><br></pre></td></tr></table></figure></li><li><p>执行函数体： 预编译完成后，按代码顺序执行，变量赋值、表达式求值在此阶段完成。</p></li></ol><hr><h2 id="作用域链与生命周期"><a href="#作用域链与生命周期" class="headerlink" title="作用域链与生命周期"></a>作用域链与生命周期</h2><ul><li>GO 始终在作用域链末端，函数执行时 AO 位于前端，形成链式查找。</li><li>AO 随函数调用创建、执行完毕销毁，每次调用产生独立 AO，闭包会延长变量生命周期。</li><li>未声明直接赋值的变量（非严格模式）自动成为全局变量，挂载到 GO。<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">test</span>(<span class="params"></span>) &#123;</span><br><span class="line">accidentalGlobal = <span class="number">10</span>; <span class="comment">// 等价于 window.accidentalGlobal = 10</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">test</span>();</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(accidentalGlobal); <span class="comment">// 10</span></span><br></pre></td></tr></table></figure></li></ul><hr><h2 id="示例分析"><a href="#示例分析" class="headerlink" title="示例分析"></a>示例分析</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">foo</span>(<span class="params">y</span>) &#123;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(z); <span class="comment">// undefined（变量提升）</span></span><br><span class="line"><span class="keyword">var</span> z = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="title function_">y</span>(<span class="params"></span>) &#123;&#125; <span class="comment">// 覆盖形参 y</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(y, z); <span class="comment">// ƒ y() &#123;&#125;, 2</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="title function_">foo</span>(<span class="number">3</span>);</span><br></pre></td></tr></table></figure><ol><li><p>全局预编译</p><ul><li>变量 <code>x</code> 提升，值为 <code>undefined</code>。</li><li>函数 <code>foo</code> 提升，覆盖同名变量（如有）。</li><li>执行代码，<code>x</code> 赋值为 1。</li></ul></li><li><p>调用 <code>foo(3)</code> 时的 AO</p><ul><li>形参 <code>y</code> 初始化为 3，后因函数声明 <code>function y() &#123;&#125;</code> 被覆盖为函数体。</li><li>变量 <code>z</code> 提升，值为 <code>undefined</code>，执行到赋值语句后变为 2。</li></ul></li></ol><hr><h3 id="关键区别总结"><a href="#关键区别总结" class="headerlink" title="关键区别总结"></a>关键区别总结</h3><table><thead><tr><th>特征</th><th>全局预编译（GO）</th><th>函数预编译（AO）</th></tr></thead><tbody><tr><td>触发时机</td><td>脚本加载时</td><td>函数调用时</td></tr><tr><td>作用域链位置</td><td>最外层（始终存在）</td><td>函数执行时前端（临时）</td></tr><tr><td>变量处理顺序</td><td>变量 → 函数声明</td><td>形参&#x2F;变量 → 函数声明</td></tr><tr><td>同名覆盖逻辑</td><td>函数声明覆盖变量</td><td>函数声明覆盖形参&#x2F;变量</td></tr><tr><td>生命周期</td><td>持久（除非页面关闭）</td><td>临时（函数执行完毕销毁）</td></tr></tbody></table>]]></content>
     
     
       
       
-    <summary type="html">&lt;h2 id=&quot;介绍&quot;&gt;&lt;a href=&quot;#介绍&quot; class=&quot;headerlink&quot; title=&quot;介绍&quot;&gt;&lt;/a&gt;介绍&lt;/h2&gt;&lt;blockquote&gt;
-&lt;p&gt;CSS 变量定义名称必须要使用 &lt;code&gt;--&lt;/code&gt; 作为开头，区分大小写通常使用短横线进行分割单词&lt;/</summary>
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;速记：变量声明提升，函数整体提升&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;全局预编译（GO-生成）&quot;&gt;&lt;a href=&quot;#全局预编译（GO-生成）&quot; class=&quot;headerlink&quot; title=&quot;全局预编译（GO 生成）&quot;&gt;&lt;/a</summary>
       
     
     
@@ -130,9 +132,7 @@
     
     <category term="前端" scheme="https://couneu.github.io/tags/%E5%89%8D%E7%AB%AF/"/>
     
-    <category term="CSS" scheme="https://couneu.github.io/tags/CSS/"/>
-    
-    <category term="variable" scheme="https://couneu.github.io/tags/variable/"/>
+    <category term="Javascript" scheme="https://couneu.github.io/tags/Javascript/"/>
     
   </entry>
   
@@ -168,36 +168,6 @@
   </entry>
   
   <entry>
-    <title>RESTAPI 请求</title>
-    <link href="https://couneu.github.io/web/html/02_RESTAPI/"/>
-    <id>https://couneu.github.io/web/html/02_RESTAPI/</id>
-    <published>2024-12-31T16:00:00.000Z</published>
-    <updated>2024-12-31T16:00:00.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="GET-请求"><a href="#GET-请求" class="headerlink" title="GET 请求"></a>GET 请求</h2><blockquote><p>GET 请求： 用于从指定资源请求数据，将数据插入到 url 末尾</p></blockquote><p>示例：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/test/demo_form.<span class="property">php</span>?name1=value1&amp;name2=value2</span><br></pre></td></tr></table></figure><h3 id="GET-请求的其他一些注释："><a href="#GET-请求的其他一些注释：" class="headerlink" title="GET 请求的其他一些注释："></a>GET 请求的其他一些注释：</h3><ul><li>GET 请求可被缓存</li><li>GET 请求保留在浏览器历史记录中</li><li>GET 请求可被收藏为书签</li><li>GET 请求不应在处理敏感数据时使用</li><li>GET 请求有长度限制</li><li>GET 请求只应当用于取回数据（不修改）</li></ul><h2 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h2><blockquote><p>POST 用于将数据发送到服务器来创建&#x2F;更新资源。</p></blockquote><blockquote><p>通过 POST 发送到服务器的数据存储在 HTTP 请求的请求主体中</p></blockquote><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable constant_">POST</span> /test/demo_form.<span class="property">php</span> <span class="variable constant_">HTTP</span>/<span class="number">1.1</span></span><br><span class="line"><span class="title class_">Host</span>: w3school.<span class="property">com</span>.<span class="property">cn</span></span><br><span class="line">name1=value1&amp;name2=value2</span><br></pre></td></tr></table></figure><blockquote><p>POST 是最常见的 HTTP 方法之一。</p></blockquote><h3 id="POST-请求的其他一些注释："><a href="#POST-请求的其他一些注释：" class="headerlink" title="POST 请求的其他一些注释："></a>POST 请求的其他一些注释：</h3><ul><li>POST 请求不会被缓存</li><li>POST 请求不会保留在浏览器历史记录中</li><li>POST 不能被收藏为书签</li><li>POST 请求对数据长度没有要求</li></ul><h2 id="PUT-方法"><a href="#PUT-方法" class="headerlink" title="PUT 方法"></a>PUT 方法</h2><blockquote><p>PUT 用于将数据发送到服务器来创建&#x2F;更新资源。</p></blockquote><blockquote><p>POST 和 PUT 之间的区别在于 PUT 请求是幂等的（idempotent）。也就是说，多次调用相同的 PUT 请求将始终产生相同的结果。相反，重复调用 POST 请求<br>具有多次创建相同资源的副作用。</p></blockquote><h2 id="HEAD-方法"><a href="#HEAD-方法" class="headerlink" title="HEAD 方法"></a>HEAD 方法</h2><blockquote><p>HEAD 与 GET 几乎相同，但没有响应主体。</p></blockquote><blockquote><p>如果 GET &#x2F;users 返回用户列表，那么 HEAD &#x2F;users 将发出相同的请求，但不会返回用户列表。</p></blockquote>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;h2 id=&quot;GET-请求&quot;&gt;&lt;a href=&quot;#GET-请求&quot; class=&quot;headerlink&quot; title=&quot;GET 请求&quot;&gt;&lt;/a&gt;GET 请求&lt;/h2&gt;&lt;blockquote&gt;
-&lt;p&gt;GET 请求： 用于从指定资源请求数据，将数据插入到 url 末尾&lt;/p&gt;
-&lt;/b</summary>
-      
-    
-    
-    
-    <category term="前端" scheme="https://couneu.github.io/categories/%E5%89%8D%E7%AB%AF/"/>
-    
-    
-    <category term="前端" scheme="https://couneu.github.io/tags/%E5%89%8D%E7%AB%AF/"/>
-    
-    <category term="HTML" scheme="https://couneu.github.io/tags/HTML/"/>
-    
-    <category term="RESTAPI" scheme="https://couneu.github.io/tags/RESTAPI/"/>
-    
-  </entry>
-  
-  <entry>
     <title>HTML 常用状态码</title>
     <link href="https://couneu.github.io/web/html/01_html_status/"/>
     <id>https://couneu.github.io/web/html/01_html_status/</id>
@@ -228,6 +198,36 @@
     <category term="HTML" scheme="https://couneu.github.io/tags/HTML/"/>
     
     <category term="状态码" scheme="https://couneu.github.io/tags/%E7%8A%B6%E6%80%81%E7%A0%81/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>RESTAPI 请求</title>
+    <link href="https://couneu.github.io/web/html/02_RESTAPI/"/>
+    <id>https://couneu.github.io/web/html/02_RESTAPI/</id>
+    <published>2024-12-31T16:00:00.000Z</published>
+    <updated>2024-12-31T16:00:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="GET-请求"><a href="#GET-请求" class="headerlink" title="GET 请求"></a>GET 请求</h2><blockquote><p>GET 请求： 用于从指定资源请求数据，将数据插入到 url 末尾</p></blockquote><p>示例：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/test/demo_form.<span class="property">php</span>?name1=value1&amp;name2=value2</span><br></pre></td></tr></table></figure><h3 id="GET-请求的其他一些注释："><a href="#GET-请求的其他一些注释：" class="headerlink" title="GET 请求的其他一些注释："></a>GET 请求的其他一些注释：</h3><ul><li>GET 请求可被缓存</li><li>GET 请求保留在浏览器历史记录中</li><li>GET 请求可被收藏为书签</li><li>GET 请求不应在处理敏感数据时使用</li><li>GET 请求有长度限制</li><li>GET 请求只应当用于取回数据（不修改）</li></ul><h2 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h2><blockquote><p>POST 用于将数据发送到服务器来创建&#x2F;更新资源。</p></blockquote><blockquote><p>通过 POST 发送到服务器的数据存储在 HTTP 请求的请求主体中</p></blockquote><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable constant_">POST</span> /test/demo_form.<span class="property">php</span> <span class="variable constant_">HTTP</span>/<span class="number">1.1</span></span><br><span class="line"><span class="title class_">Host</span>: w3school.<span class="property">com</span>.<span class="property">cn</span></span><br><span class="line">name1=value1&amp;name2=value2</span><br></pre></td></tr></table></figure><blockquote><p>POST 是最常见的 HTTP 方法之一。</p></blockquote><h3 id="POST-请求的其他一些注释："><a href="#POST-请求的其他一些注释：" class="headerlink" title="POST 请求的其他一些注释："></a>POST 请求的其他一些注释：</h3><ul><li>POST 请求不会被缓存</li><li>POST 请求不会保留在浏览器历史记录中</li><li>POST 不能被收藏为书签</li><li>POST 请求对数据长度没有要求</li></ul><h2 id="PUT-方法"><a href="#PUT-方法" class="headerlink" title="PUT 方法"></a>PUT 方法</h2><blockquote><p>PUT 用于将数据发送到服务器来创建&#x2F;更新资源。</p></blockquote><blockquote><p>POST 和 PUT 之间的区别在于 PUT 请求是幂等的（idempotent）。也就是说，多次调用相同的 PUT 请求将始终产生相同的结果。相反，重复调用 POST 请求<br>具有多次创建相同资源的副作用。</p></blockquote><h2 id="HEAD-方法"><a href="#HEAD-方法" class="headerlink" title="HEAD 方法"></a>HEAD 方法</h2><blockquote><p>HEAD 与 GET 几乎相同，但没有响应主体。</p></blockquote><blockquote><p>如果 GET &#x2F;users 返回用户列表，那么 HEAD &#x2F;users 将发出相同的请求，但不会返回用户列表。</p></blockquote>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;GET-请求&quot;&gt;&lt;a href=&quot;#GET-请求&quot; class=&quot;headerlink&quot; title=&quot;GET 请求&quot;&gt;&lt;/a&gt;GET 请求&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;GET 请求： 用于从指定资源请求数据，将数据插入到 url 末尾&lt;/p&gt;
+&lt;/b</summary>
+      
+    
+    
+    
+    <category term="前端" scheme="https://couneu.github.io/categories/%E5%89%8D%E7%AB%AF/"/>
+    
+    
+    <category term="前端" scheme="https://couneu.github.io/tags/%E5%89%8D%E7%AB%AF/"/>
+    
+    <category term="HTML" scheme="https://couneu.github.io/tags/HTML/"/>
+    
+    <category term="RESTAPI" scheme="https://couneu.github.io/tags/RESTAPI/"/>
     
   </entry>
   
