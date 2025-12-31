@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>COUNEU</title>
+  <icon>https://couneu.github.io/icon.png</icon>
+  
+  <link href="https://couneu.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://couneu.github.io/"/>
+  <updated>2024-12-30T11:02:33.000Z</updated>
+  <id>https://couneu.github.io/</id>
+  
+  <author>
+    <name>couneu</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>RESTful API</title>
+    <link href="https://couneu.github.io/wiki/web/JavaScript/RESTful_API/"/>
+    <id>https://couneu.github.io/wiki/web/JavaScript/RESTful_API/</id>
+    <published>2022-12-30T11:02:33.000Z</published>
+    <updated>2024-12-30T11:02:33.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;RESTful API&lt;/strong&gt; 是遵循 &lt;strong&gt;REST（Representational State Transfer，表述性状态转移）&lt;/strong&gt; 架构风格设计的 API。&lt;br&gt;
+REST 是 Roy</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Web" scheme="https://couneu.github.io/tags/Web/"/>
+    
+  </entry>
+  
+</feed>
