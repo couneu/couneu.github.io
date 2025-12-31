@@ -6,7 +6,7 @@
   <link href="https://couneu.github.io/atom.xml" rel="self"/>
   
   <link href="https://couneu.github.io/"/>
-  <updated>2024-12-30T11:02:33.000Z</updated>
+  <updated>2025-10-09T16:02:33.000Z</updated>
   <id>https://couneu.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>OpenVPN 部署办公异地组网</title>
+    <link href="https://couneu.github.io/blog/OpenVPN%E9%83%A8%E7%BD%B2%E5%8A%9E%E5%85%AC%E7%BD%91/"/>
+    <id>https://couneu.github.io/blog/OpenVPN%E9%83%A8%E7%BD%B2%E5%8A%9E%E5%85%AC%E7%BD%91/</id>
+    <published>2025-08-11T04:00:00.000Z</published>
+    <updated>2025-10-09T16:02:33.000Z</updated>
+    
+    
+    <summary type="html">加密文章, 请输入密码查看.</summary>
+    
+    
+    
+    
+    <category term="OpenVPN" scheme="https://couneu.github.io/tags/OpenVPN/"/>
+    
+    <category term="VPN" scheme="https://couneu.github.io/tags/VPN/"/>
+    
+    <category term="办公" scheme="https://couneu.github.io/tags/%E5%8A%9E%E5%85%AC/"/>
+    
+  </entry>
   
   <entry>
     <title>RESTful API</title>
