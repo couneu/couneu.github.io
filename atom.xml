@@ -6,7 +6,7 @@
   <link href="https://couneu.github.io/atom.xml" rel="self"/>
   
   <link href="https://couneu.github.io/"/>
-  <updated>2025-10-09T16:02:33.000Z</updated>
+  <updated>2025-12-12T11:02:33.000Z</updated>
   <id>https://couneu.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>提示词工程</title>
+    <link href="https://couneu.github.io/wiki/agent/Prompt_Engineering/"/>
+    <id>https://couneu.github.io/wiki/agent/Prompt_Engineering/</id>
+    <published>2025-10-30T11:02:33.000Z</published>
+    <updated>2025-12-12T11:02:33.000Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h1&gt;提示词工程&lt;/h1&gt;
+&lt;p&gt;提示词工程（Prompt Engineering）是使用 AI</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Web" scheme="https://couneu.github.io/tags/Web/"/>
+    
+  </entry>
   
   <entry>
     <title>OpenVPN 部署办公异地组网</title>

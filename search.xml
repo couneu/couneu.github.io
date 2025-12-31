@@ -4,6 +4,25 @@
   
     
     <entry>
+      <title>提示词工程</title>
+      <link href="/wiki/agent/Prompt_Engineering/"/>
+      <url>/wiki/agent/Prompt_Engineering/</url>
+      
+        <content type="html"><![CDATA[<h1>提示词工程</h1><p>提示词工程（Prompt Engineering）是使用 AI 模型进行文本生成时，对输入的提示词进行优化，以获得更好的结果。</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Web </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>OpenVPN 部署办公异地组网</title>
       <link href="/blog/OpenVPN%E9%83%A8%E7%BD%B2%E5%8A%9E%E5%85%AC%E7%BD%91/"/>
       <url>/blog/OpenVPN%E9%83%A8%E7%BD%B2%E5%8A%9E%E5%85%AC%E7%BD%91/</url>
