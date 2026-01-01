@@ -37,11 +37,11 @@
     
     
     
-    <category term="Web" scheme="https://couneu.github.io/tags/Web/"/>
-    
     <category term="AI" scheme="https://couneu.github.io/tags/AI/"/>
     
-    <category term="提示工程" scheme="https://couneu.github.io/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/"/>
+    <category term="AGI" scheme="https://couneu.github.io/tags/AGI/"/>
+    
+    <category term="prompt" scheme="https://couneu.github.io/tags/prompt/"/>
     
   </entry>
   
