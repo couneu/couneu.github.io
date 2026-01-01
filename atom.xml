@@ -17,7 +17,7 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>提示词工程</title>
+    <title>提示工程</title>
     <link href="https://couneu.github.io/wiki/agent/Prompt_Engineering/"/>
     <id>https://couneu.github.io/wiki/agent/Prompt_Engineering/</id>
     <published>2025-10-30T11:02:33.000Z</published>
@@ -28,8 +28,9 @@
       
         
         
-    <summary type="html">&lt;h1&gt;提示词工程&lt;/h1&gt;
-&lt;p&gt;提示词工程（Prompt Engineering）是使用 AI</summary>
+    <summary type="html">&lt;hr&gt;
+&lt;h1&gt;提示工程（Prompt Engineering）&lt;/h1&gt;
+&lt;p&gt;提示工程是使用大模型生成文本、处理任务时，对输入提示（prompt）进行设计与优化的实践。对于指令式大模型来说，Prompt 是唯一的输入——因此好 prompt</summary>
         
       
     
@@ -37,6 +38,10 @@
     
     
     <category term="Web" scheme="https://couneu.github.io/tags/Web/"/>
+    
+    <category term="AI" scheme="https://couneu.github.io/tags/AI/"/>
+    
+    <category term="提示工程" scheme="https://couneu.github.io/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/"/>
     
   </entry>
   
